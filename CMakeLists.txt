@@ -3,6 +3,11 @@ cmake_minimum_required(VERSION 3.10)
 # Set the project name
 project(CPP)
 
+#Set C++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# Set Output build directory
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
 
 # Set output directory for all the executables
@@ -22,3 +27,4 @@ add_executable(fibonacci metaprogramming/compile_time_fibonacci.cpp)
 
 add_executable(mmap_file mmap/mmapfile.cpp)
 add_executable(double_mapper_ringbuffer mmap/doubleMappedRingBuffer.cpp)
+add_executable(price_time_order_book trading/price_time_order_book.cpp)
