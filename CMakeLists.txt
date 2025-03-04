@@ -27,4 +27,4 @@ add_executable(fibonacci metaprogramming/compile_time_fibonacci.cpp)
 
 add_executable(mmap_file mmap/mmapfile.cpp)
 add_executable(double_mapper_ringbuffer mmap/doubleMappedRingBuffer.cpp)
-add_executable(price_time_order_book trading/price_time_order_book.cpp)
+add_executable(price_volume_order_book trading/price_volume_order_book.cpp)
