@@ -16,109 +16,108 @@ namespace ajr {
         using allocator_traits = std::allocator_traits<Allocator>;
 
       public:
-        struct iterator {
-
+        class RandomAccessIterator {
+        public:
             using iterator_category = std::random_access_iterator_tag;
             using value_type = T;
+            using difference_type = std::ptrdiff_t;
             using pointer = T*;
             using reference = T&;
-            using difference_type = std::ptrdiff_t;
 
-            iterator() : mPtr_{nullptr} {}
+        private:
+            pointer ptr;
 
-            iterator(pointer p) : mPtr_{p} {}
+        public:
+            explicit RandomAccessIterator(pointer p = nullptr) : ptr(p) {}
 
-            iterator(const iterator& other) : mPtr_{other.mPtr_} {}
+            // Dereferencing
+            reference operator*() const {
+                return *ptr;
+            }
 
-            iterator& operator=(const iterator& other) {
-                mPtr_ = other.mPtr_;
+            // Pointer access
+            pointer operator->() const {
+                return ptr;
+            }
+
+            // Pre-increment
+            RandomAccessIterator& operator++() {
+                ++ptr;
                 return *this;
             }
 
-            ~iterator() = default;
-
-            reference operator*() {
-                return *mPtr_;
+            // Post-increment
+            RandomAccessIterator operator++(int) {
+                RandomAccessIterator temp = *this;
+                ++(*this);
+                return temp;
             }
 
-            pointer operator->() {
-                mPtr_;
-            }
-
-            // To support range-based for loops
-
-            friend bool operator==(const iterator& a, const iterator& b) {
-                return a.mPtr_ == b.mPtr_;
-            }
-
-            friend bool operator!=(const iterator& a, const iterator& b) {
-                return !(a == b);
-            }
-
-            // To support std::sort
-            friend bool operator<(const iterator& a, const iterator& b) {
-                return a.mPtr_ < b.mPtr_;
-            }
-
-            // Forward iterator requirements
-
-            // ++it
-            iterator& operator++() {
-                ++mPtr_;
+            // Pre-decrement
+            RandomAccessIterator& operator--() {
+                --ptr;
                 return *this;
             }
 
-            // it++
-            iterator operator++(int) {
-                iterator ret {mPtr_};
-                ++mPtr_;
-                return ret;
+            // Post-decrement
+            RandomAccessIterator operator--(int) {
+                RandomAccessIterator temp = *this;
+                --(*this);
+                return temp;
             }
 
-            // Bi-directional iterator requirements
-
-            // --it
-            iterator& operator--() {
-                --mPtr_;
-                return *this;
-            }
-            
-            // it--
-            iterator operator--(int) {
-                iterator ret (mPtr_);
-                --mPtr_;
-                return ret;
+            // Arithmetic operations
+            RandomAccessIterator operator+(difference_type n) const {
+                return RandomAccessIterator(ptr + n);
             }
 
-            // Random-access iterator requirements
-            T& operator[](difference_type idx) {
-                return mPtr_[idx];
+            RandomAccessIterator operator-(difference_type n) const {
+                return RandomAccessIterator(ptr - n);
             }
 
-            iterator& operator+=(difference_type idx) {
-                mPtr_+=idx;
+            difference_type operator-(const RandomAccessIterator& other) const {
+                return ptr - other.ptr;
+            }
+
+            RandomAccessIterator& operator+=(difference_type n) {
+                ptr += n;
                 return *this;
             }
 
-            iterator operator+(difference_type idx) {
-                return iterator(mPtr_+idx);
-            }
-
-            iterator& operator-=(difference_type idx) {
-                mPtr_-=idx;
+            RandomAccessIterator& operator-=(difference_type n) {
+                ptr -= n;
                 return *this;
             }
 
-            iterator operator-(difference_type idx) {
-                return iterator(mPtr_-idx);
+            // Subscript operator
+            reference operator[](difference_type n) const {
+                return ptr[n];
             }
 
-            difference_type operator-(const iterator& other) {
-                return (mPtr_-other.mPtr_);
+            // Comparison operators
+            bool operator==(const RandomAccessIterator& other) const {
+                return ptr == other.ptr;
             }
 
-          private:
-            pointer mPtr_;
+            bool operator!=(const RandomAccessIterator& other) const {
+                return ptr != other.ptr;
+            }
+
+            bool operator<(const RandomAccessIterator& other) const {
+                return ptr < other.ptr;
+            }
+
+            bool operator>(const RandomAccessIterator& other) const {
+                return ptr > other.ptr;
+            }
+
+            bool operator<=(const RandomAccessIterator& other) const {
+                return ptr <= other.ptr;
+            }
+
+            bool operator>=(const RandomAccessIterator& other) const {
+                return ptr >= other.ptr;
+            }
         };
 
         // Default ctor
@@ -153,9 +152,8 @@ namespace ajr {
             }
         }
 
-        // IMP to specify the ItCategory for compiler to know that it is an iterator or it might confuse it with some other 
-        // parameterized constructor taking 2 int's for example
-        template<typename InputIt, typename ItCategory = typename std::iterator_traits<InputIt>::iterator_category>
+        template<typename InputIt>
+        requires std::input_iterator<InputIt>
         vector(InputIt first, InputIt last, const Allocator& alloc = Allocator())
             : mStart_{nullptr}
             , mEnd_{nullptr}
@@ -254,20 +252,20 @@ namespace ajr {
             return mStart_;
         }
 
-        iterator begin() {
-            return iterator(mStart_);
+        RandomAccessIterator begin() {
+            return RandomAccessIterator(mStart_);
         }
 
-        const iterator begin() const {
-            return iterator(mStart_);
+        const RandomAccessIterator begin() const {
+            return RandomAccessIterator(mStart_);
         }
 
-        iterator end() {
-            return iterator(mEnd_);
+        RandomAccessIterator end() {
+            return RandomAccessIterator(mEnd_);
         }
 
-        const iterator end() const {
-            return iterator(mEnd_);
+        const RandomAccessIterator end() const {
+            return RandomAccessIterator(mEnd_);
         }
 
         void reserve(size_type new_cap) {
