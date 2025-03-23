@@ -152,8 +152,8 @@ namespace ajr {
             }
         }
 
-        template<typename InputIt>
-        requires std::input_iterator<InputIt>
+        template<std::input_iterator InputIt>
+        // requires std::input_iterator<InputIt>
         vector(InputIt first, InputIt last, const Allocator& alloc = Allocator())
             : mStart_{nullptr}
             , mEnd_{nullptr}
