@@ -21,6 +21,7 @@ add_executable(vector custom_std/custom_vector.cpp)
 add_executable(shared_ptr custom_std/custom_shared_ptr.cpp)
 add_executable(unique_ptr custom_std/custom_unique_ptr.cpp)
 add_executable(function custom_std/custom_std_function.cpp)
+add_executable(hashmap custom_std/custom_hashmap.cpp)
 
 add_executable(spsc_queue concurrency/spsc_queue.cpp)
 
