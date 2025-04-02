@@ -24,6 +24,7 @@ add_executable(function custom_std/custom_std_function.cpp)
 add_executable(hashmap custom_std/custom_hashmap.cpp)
 
 add_executable(spsc_queue concurrency/spsc_queue.cpp)
+add_executable(mt_practice concurrency/multithreading_practice.cpp)
 
 add_executable(fibonacci metaprogramming/compile_time_fibonacci.cpp)
 
