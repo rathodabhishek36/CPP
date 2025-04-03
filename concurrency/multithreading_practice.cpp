@@ -118,7 +118,7 @@ int main() {
         }
         return sum;
     };
-    auto future = std::async(std::launch::deferred, sum_of_squares, 100);
+    auto future = std::async(std::launch::async, sum_of_squares, 100);
     // Do other work while waiting for the result
     std::cout << "Doing other work..." << std::endl;
     // Wait for the result
