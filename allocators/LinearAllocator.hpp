@@ -5,20 +5,20 @@
 
 #include "BaseAllocator.hpp"
 
+template<std::size_t CAPACITY>
 class LinearAllocator final : public BaseAllocator {
 private:
-    void* start_ = nullptr;
+    char buffer_[CAPACITY];
     std::size_t offset_ = 0;
 
 public:
-    LinearAllocator(const std::size_t capacity) : BaseAllocator(capacity), start_(malloc(capacity)), offset_(0) {}
+    LinearAllocator() : BaseAllocator(CAPACITY), offset_(0) {
+        std::memset(buffer_, 0, CAPACITY);
+        std::cout << "Contructed LinearAllocator with capacity: " << CAPACITY << std::endl;
+    }
 
     ~LinearAllocator() {
-        if (start_) {
-            free(start_);
-            start_ = nullptr;
-        }
-        offset_ = 0;
+        std::cout << "Destructed LinearAllocator" << std::endl;
     }
 
     LinearAllocator(const LinearAllocator&) = delete;
@@ -26,10 +26,10 @@ public:
     LinearAllocator& operator=(const LinearAllocator&) = delete;
 
     void* allocate(const std::size_t size, const std::size_t alignment = 0) override {
-        auto current = (std::uintptr_t)start_ + offset_;
+        auto current = (std::uintptr_t)buffer_ + offset_;
         auto alignedAddress = getAlignedAddress((void*)current, alignment);
         auto padding = std::uintptr_t(alignedAddress) - std::uintptr_t(current);
-        if (padding + size > capacity_) {
+        if (padding + size > CAPACITY) {
             throw std::bad_alloc();
         }
         offset_ += padding + size;
@@ -42,24 +42,16 @@ public:
         // no-op
     }
 
-    void construct(void* ptr) override {
-        // no-op
-    }
-
-    void destruct(void* ptr) override {
-        // no-op
-    }
-
     void reset() {
         offset_ = 0;
     }
 
     std::size_t getAvailable() const {
-        return capacity_ - offset_;
+        return CAPACITY - offset_;
     }
 
     void printMemory() {
-        hexdump(start_);
+        hexdump(buffer_);
     }
 
 };

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cstdint>
+#include <cstring>
 
 class BaseAllocator {
 protected:
@@ -21,9 +22,15 @@ public:
 
     virtual void deallocate(void* ptr) = 0;
 
-    virtual void construct(void* ptr) = 0;
+    template<typename ObjectType, typename... Args>
+    ObjectType* construct_at(ObjectType* ptr, Args&&... args) {
+        return new ((void*)ptr) ObjectType(std::forward<Args>(args)...);
+    }
 
-    virtual void destruct(void* ptr) = 0;
+    template<typename ObjectType>
+    void destroy(void* ptr) {
+        static_cast<ObjectType*>(ptr)->~ObjectType();
+    }
 
     void* getAlignedAddress(void* start, std::size_t alignment) {
         std::uintptr_t addr = reinterpret_cast<std::uintptr_t>(start);
@@ -53,7 +60,10 @@ public:
                     std::cout << (std::isprint(c) ? c : '.');
                 }
             }
-            std::cout << std::endl;
+            // std::cout persists the output mode, hence we need to reset it
+            // so in our case, if we missed this, evrything after be printed in hex format
+            // because we used std::cout << std::hex above
+            std::cout << std::dec << std::endl;
         }
     }
 };
