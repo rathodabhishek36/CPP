@@ -5,6 +5,14 @@
 
 #include "BaseAllocator.hpp"
 
+/*
+* Idea is to manage the memory as a Stack. So, as LinerAllocator, we keep a pointer to the current memory address
+* and we move it forward for every allocation. However, we also can move it backwards when a free operation is done. 
+* Similar to LinearAllocator, we keep the spatial locality principle and the fragmentation is still very low.
+* Time Complexity: O(1) for allocation and deallocation
+* Constraints: Can only deallocate the last allocated element.
+*/
+
 template<std::size_t CAPACITY>
 class StackAllocator : public BaseAllocator {
 

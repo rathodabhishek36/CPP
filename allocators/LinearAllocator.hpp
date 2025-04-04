@@ -5,6 +5,14 @@
 
 #include "BaseAllocator.hpp"
 
+/*
+* Idea is to keep a pointer at the first memory address of your memory chunk and move it every time an allocation is done. 
+* In this allocator, the internal fragmentation is kept to a minimum because all elements are sequentially (spatial locality) inserted
+* and the only fragmentation between them is the alignment.
+* Time Complexity: O(1) for allocation and deallocation
+* Constraints: Cannot deallocte signle element, only the whole memory chunk can be deallocated
+*/
+
 template<std::size_t CAPACITY>
 class LinearAllocator final : public BaseAllocator {
 private:
